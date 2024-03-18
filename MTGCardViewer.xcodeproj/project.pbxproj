@@ -14,6 +14,9 @@
 		124B4DB42B96C4C700E26D52 /* MTGCardViewerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124B4DB32B96C4C700E26D52 /* MTGCardViewerTests.swift */; };
 		124B4DBE2B96C4C700E26D52 /* MTGCardViewerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124B4DBD2B96C4C700E26D52 /* MTGCardViewerUITests.swift */; };
 		124B4DC02B96C4C700E26D52 /* MTGCardViewerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124B4DBF2B96C4C700E26D52 /* MTGCardViewerUITestsLaunchTests.swift */; };
+		12610B692BA4A75500A71048 /* CardDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12610B682BA4A75500A71048 /* CardDetailsView.swift */; };
+		12610B6C2BA58A3900A71048 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 12610B6B2BA58A3900A71048 /* SDWebImageSwiftUI */; };
+		12610B6E2BA5A15B00A71048 /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12610B6D2BA5A15B00A71048 /* Data.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +47,9 @@
 		124B4DB92B96C4C700E26D52 /* MTGCardViewerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MTGCardViewerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		124B4DBD2B96C4C700E26D52 /* MTGCardViewerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTGCardViewerUITests.swift; sourceTree = "<group>"; };
 		124B4DBF2B96C4C700E26D52 /* MTGCardViewerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTGCardViewerUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		1253C17B2BA4184800912D2D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		12610B682BA4A75500A71048 /* CardDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailsView.swift; sourceTree = "<group>"; };
+		12610B6D2BA5A15B00A71048 /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				12610B6C2BA58A3900A71048 /* SDWebImageSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,10 +101,13 @@
 		124B4DA12B96C4C400E26D52 /* MTGCardViewer */ = {
 			isa = PBXGroup;
 			children = (
+				1253C17B2BA4184800912D2D /* Info.plist */,
 				124B4DA22B96C4C400E26D52 /* MTGCardViewerApp.swift */,
 				124B4DA42B96C4C400E26D52 /* ContentView.swift */,
 				124B4DA62B96C4C600E26D52 /* Assets.xcassets */,
 				124B4DA82B96C4C600E26D52 /* Preview Content */,
+				12610B682BA4A75500A71048 /* CardDetailsView.swift */,
+				12610B6D2BA5A15B00A71048 /* Data.swift */,
 			);
 			path = MTGCardViewer;
 			sourceTree = "<group>";
@@ -143,6 +153,9 @@
 			dependencies = (
 			);
 			name = MTGCardViewer;
+			packageProductDependencies = (
+				12610B6B2BA58A3900A71048 /* SDWebImageSwiftUI */,
+			);
 			productName = MTGCardViewer;
 			productReference = 124B4D9F2B96C4C400E26D52 /* MTGCardViewer.app */;
 			productType = "com.apple.product-type.application";
@@ -215,6 +228,9 @@
 				Base,
 			);
 			mainGroup = 124B4D962B96C4C400E26D52;
+			packageReferences = (
+				12610B6A2BA5874D00A71048 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+			);
 			productRefGroup = 124B4DA02B96C4C400E26D52 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -258,7 +274,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				124B4DA52B96C4C400E26D52 /* ContentView.swift in Sources */,
+				12610B692BA4A75500A71048 /* CardDetailsView.swift in Sources */,
 				124B4DA32B96C4C400E26D52 /* MTGCardViewerApp.swift in Sources */,
+				12610B6E2BA5A15B00A71048 /* Data.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,6 +443,7 @@
 				DEVELOPMENT_TEAM = JZ4TVZD6QL;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MTGCardViewer/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -454,6 +473,7 @@
 				DEVELOPMENT_TEAM = JZ4TVZD6QL;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MTGCardViewer/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -588,6 +608,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		12610B6A2BA5874D00A71048 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		12610B6B2BA58A3900A71048 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 12610B6A2BA5874D00A71048 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 124B4D972B96C4C400E26D52 /* Project object */;
 }
