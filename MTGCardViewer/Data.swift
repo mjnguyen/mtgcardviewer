@@ -17,7 +17,22 @@ enum Rarity: String, CaseIterable, Equatable, Decodable {
     case special = "special"
     case bonus = "bonus"
 
-    var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
+}
+
+enum CardType: String, CaseIterable, Equatable, Decodable {
+    case all = "All Card Types"
+    case enchantment = "enchantment"
+    case sorcery = "sorcery"
+    case instant = "instant"
+    case creature = "creature"
+    case artifact = "artifact"
+    case land = "land"
+    case planeswalker = "planeswalker"
+    case battle = "battle"
+    // Supertypes
+    case legendary = "legend"
+    case snow = "snow"
+
 }
 
 struct Card: Identifiable {
@@ -45,6 +60,7 @@ class CardFilter: Identifiable {
     var setName: String = ""
 }
 
+@MainActor
 class CardService: ObservableObject {
     @Published var cards: [Card] = []
     @Published var total_cards: Int = 0
@@ -52,7 +68,7 @@ class CardService: ObservableObject {
     @Published var currentCard: Card?
     @Published var error: CardFetchErrorResponse?
 
-    func fetchCards( completion: @escaping (([Card]) -> Void), onError: @escaping (String) -> Void) {
+    func fetchCards( completion: @escaping (([Card]) -> Void), onError: @escaping (CardSearchError) -> Void) {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.scryfall.com"
@@ -90,18 +106,19 @@ class CardService: ObservableObject {
         error = nil
         URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data else {
-                let msg = ("No data in response: \(error?.localizedDescription ?? "Unknown error")")
-                onError(msg)
+                let serviceError = CardSearchError(errorDescription: error?.localizedDescription, searchErrorType: .data)
+                onError(serviceError)
                 return
             }
             guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode >= 200 && httpResponse.statusCode < 300 else {
                 if let errorResponse = try? JSONDecoder().decode(CardFetchErrorResponse.self, from: data) {
                     let details = errorResponse.details
-                    let msg = ("Error getting information: \(details)")
-                    onError(msg)
+                    let serviceError = CardSearchError(errorDescription: details, searchErrorType: .noResults)
+                    onError(serviceError)
                 }
                 else {
-                    print ("Error response: " + (error?.localizedDescription ?? "unknown error"))
+                    let serviceError = CardSearchError(errorDescription: error?.localizedDescription, searchErrorType: .data)
+                    onError(serviceError)
                 }
                 return
             }
@@ -127,7 +144,8 @@ class CardService: ObservableObject {
                     }
                 }
             } catch {
-                print("Failed to decode data response: " + error.localizedDescription)
+                let serviceError = CardSearchError(errorDescription: error.localizedDescription, searchErrorType: .unknown)
+                onError(serviceError)
             }
         }.resume()
     }
@@ -156,6 +174,42 @@ struct CardFetchErrorResponse: Decodable {
     let code: String
     let status: Int
     let details: String
+}
+
+struct CardSearchError: Error, LocalizedError {
+    enum CardSearchErrorType {
+        case emptySearchFields
+        case noResults
+        case network
+        case data
+        case unknown
+    }
+
+    /// A localized message describing the reason for the failure.
+    var failureReason: String? {
+        switch searchErrorType {
+        case .emptySearchFields:
+            return "Please fill in search criteria"
+        case .noResults:
+            return "No Results"
+        case .network:
+            return "Netowrk Error"
+        default:
+            return "Unknown Error"
+        }
+    }
+
+    /// A localized message describing what error occurred.
+    var errorDescription: String?
+
+    /// A localized message describing how one might recover from the failure.
+    var recoverySuggestion: String?
+
+    /// A localized message providing "help" text if the user requests help.
+    var helpAnchor: String?
+
+
+    var searchErrorType: CardSearchErrorType
 }
 
 struct CardFaces: Decodable {

@@ -17,7 +17,7 @@ struct CardDetailsView: View {
             }
         }
         .padding()
-        .background(Color.white)
+        .background(.regularMaterial)
         .cornerRadius(20)
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             orientationChanged.toggle()

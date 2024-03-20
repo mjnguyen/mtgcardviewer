@@ -4,9 +4,13 @@ import SDWebImage
 
 struct ContentView: View {
 
-    @State private var errorMessage: String?
+    @State private var hasServiceError = false
+    @State private var serviceError: CardSearchError?
+    @State private var cards: [Card] = [Card]()
+
     @State private var orientationChanged = false
     @State private var isShowingModal = false
+    @State private var imageWidth = 300.0
 
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
@@ -24,10 +28,12 @@ struct ContentView: View {
                 searchView
                     .frame(maxWidth: .infinity, maxHeight: 800, alignment: .leading)
                     .padding(.vertical)
+                    .background(.thinMaterial)
+                    .border(Color.black, width: 1.0)
                 if (!isFullScreenLayout) {
                     resultView
                         .frame(maxWidth: .infinity, alignment: .center)
-                        .layoutPriority(4)
+
 
                 }
             }
@@ -38,7 +44,7 @@ struct ContentView: View {
             }
 
         }
-        .background(Color.secondary).opacity(0.8)
+        .background(.thinMaterial)
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             orientationChanged.toggle()
         }
@@ -49,11 +55,12 @@ struct ContentView: View {
     private var resultView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 20) {
-                ForEach($cardService.cards) { card in
+                ForEach($cards) { card in
                     VStack {
                         WebImage(url: card.imageURL.wrappedValue) { image in
                             image.resizable()
-                                .frame(minWidth: 200, maxHeight: .infinity, alignment: .center)
+                                .frame(minWidth: 150, maxHeight: .infinity, alignment: .center)
+                                .aspectRatio(contentMode: .fit)
                                 .onTapGesture {
                                     cardService.setCurrentCard(card.wrappedValue)
                                     isShowingModal.toggle()
@@ -63,6 +70,8 @@ struct ContentView: View {
                         }
                         .onSuccess { image, data, cacheType in
 //                            print("\(cacheType) - \(image)")
+                            imageWidth = image.size.width
+
                         }
                         .indicator(.activity)
                         .transition(.fade(duration: 0.5))
@@ -70,17 +79,22 @@ struct ContentView: View {
 
                         Text(card.name.wrappedValue)
                             .font(.headline)
+                            .frame(maxWidth: imageWidth)
                         Text("\(String(describing: card.rarity.wrappedValue))")
                             .font(.subheadline)
+                            .frame(maxWidth: imageWidth)
                         Text("Artist: \(card.artist.wrappedValue)")
                             .font(.subheadline)
+                            .frame(maxWidth: imageWidth)
                         Text("\(card.set_name.wrappedValue)")
                             .font(.subheadline).italic().bold()
+                            .frame(maxWidth: imageWidth)
 
                     }
                 }
             }
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .padding(.horizontal)
         }
         .padding(.vertical)
         .frame(maxHeight: .infinity)
@@ -97,48 +111,54 @@ struct ContentView: View {
             TextField("Card name", text: $cardService.currentFilter.searchText)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .bold()
-            
+                .listRowSeparator(.hidden)
+
             TextField("Artist", text: $cardService.currentFilter.artistName)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .bold()
-            
+                .listRowSeparator(.hidden)
+
             TextField("Set", text: $cardService.currentFilter.setName)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .bold()
-            
+                .listRowSeparator(.hidden)
+
             Picker("Rarity", selection: $cardService.currentFilter.rarity) {
                 ForEach(Rarity.allCases, id: \.self) { value in
-                    Text(value.localizedName)
+                    Text(value.rawValue)
+                        .foregroundColor(.black)
+                        .foregroundStyle(.ultraThickMaterial)
                         .tag(value)
+                        .bold()
                 }
+
             }
-            .pickerStyle(.navigationLink)
+            .border(Color.black, width: 1.0)
+            .listRowSeparator(.hidden)
+            .pickerStyle(.automatic)
             .font(.subheadline)
             .bold()
-            .padding(5)
-            
+            .opacity(0.2)
+            .padding(0)
+
             fetchButton
-                .frame(maxWidth: .infinity, alignment: .center)
+                .frame(maxWidth: .infinity, maxHeight: 60, alignment: .center)
                 .listRowSeparator(.hidden)
-            
-            
-            if $cardService.cards.count > 0 {
+                .padding(0)
+                .alert(isPresented: $hasServiceError, error: serviceError) {_ in } message: { error in
+                        Text(error.recoverySuggestion ?? "")
+                }
+
+            if self.cards.count > 0 {
                 let total_cards = cardService.total_cards
-                Text("\($cardService.cards.count) of \(total_cards) Cards Shown")
+                Text("\(cards.count) of \(total_cards) Cards Shown")
                     .font(.subheadline)
-                    .padding(.vertical)
+                    .padding(0)
                     .frame(maxWidth: .infinity, maxHeight:50, alignment: .center)
             }
-
-            if errorMessage != nil {
-                errorMessageView
-                    .frame(maxHeight:150, alignment: .center)
-                    .padding()
-            }
-
-            Spacer()
         }
-        .frame(maxHeight: .infinity)
+        .listStyle(.plain)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         .navigationTitle("MTG Card Viewer")
 
     }
@@ -146,9 +166,12 @@ struct ContentView: View {
     private var fetchButton: some View {
         Button("Fetch Cards") {
             cardService.fetchCards() { results in
-                self.errorMessage = nil
-            } onError: { message in
-                self.errorMessage = message
+                self.hasServiceError = false
+                self.serviceError = nil
+                self.cards = results
+            } onError: { serviceError in
+                self.serviceError = serviceError
+                self.hasServiceError.toggle()
             }
 
         }
@@ -160,18 +183,14 @@ struct ContentView: View {
     }
 
     private var errorMessageView: some View {
-        Text("\(errorMessage ?? "")")
+        Text("\(serviceError?.failureReason ?? "")")
             .font(.subheadline)
             .foregroundStyle(.red)
             .bold()
             .italic()
             .padding()
-            .border(Color.indigo, width: 1)
     }
 }
-
-
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
