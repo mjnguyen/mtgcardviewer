@@ -58,9 +58,10 @@ class CardFilter: Identifiable {
     var artistName: String = ""
     var rarity: Rarity = .all
     var setName: String = ""
+    var cardType: CardType = .all
 }
 
-@MainActor
+
 class CardService: ObservableObject {
     @Published var cards: [Card] = []
     @Published var total_cards: Int = 0
@@ -89,6 +90,10 @@ class CardService: ObservableObject {
 
         if currentFilter.rarity != .all {
             searchTerms += " rarity:" + currentFilter.rarity.rawValue
+        }
+
+        if currentFilter.cardType != .all {
+            searchTerms += " t:" + currentFilter.cardType.rawValue
         }
 
         if searchTerms.count > 0 {

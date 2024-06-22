@@ -48,8 +48,6 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             orientationChanged.toggle()
         }
-        .id(orientationChanged) // Force view update by changing its identifier
-
     }
 
     private var resultView: some View {
@@ -69,7 +67,6 @@ struct ContentView: View {
                             ProgressView().foregroundColor(Color.blue)
                         }
                         .onSuccess { image, data, cacheType in
-//                            print("\(cacheType) - \(image)")
                             imageWidth = image.size.width
 
                         }
@@ -131,7 +128,23 @@ struct ContentView: View {
                         .tag(value)
                         .bold()
                 }
+            }
+            .border(Color.black, width: 1.0)
+            .listRowSeparator(.hidden)
+            .pickerStyle(.automatic)
+            .font(.subheadline)
+            .bold()
+            .opacity(0.2)
+            .padding(0)
 
+            Picker("Card Type", selection: $cardService.currentFilter.cardType) {
+                ForEach(CardType.allCases, id: \.self) { value in
+                    Text(value.rawValue)
+                        .foregroundColor(.black)
+                        .foregroundStyle(.ultraThickMaterial)
+                        .tag(value)
+                        .bold()
+                }
             }
             .border(Color.black, width: 1.0)
             .listRowSeparator(.hidden)
@@ -166,12 +179,12 @@ struct ContentView: View {
     private var fetchButton: some View {
         Button("Fetch Cards") {
             cardService.fetchCards() { results in
+                self.cards = results
                 self.hasServiceError = false
                 self.serviceError = nil
-                self.cards = results
             } onError: { serviceError in
+                self.hasServiceError = true
                 self.serviceError = serviceError
-                self.hasServiceError.toggle()
             }
 
         }

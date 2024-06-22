@@ -27,6 +27,10 @@ struct CardDetailsView: View {
     }
 }
 
+private extension Color {
+    static let offWhite = Color(red: 225/255, green: 225/255, blue: 245/255)
+}
+
 private extension CardDetailsView {
     struct PortraitView: View {
         let card: Card
@@ -34,21 +38,29 @@ private extension CardDetailsView {
 
         var body: some View {
             NavigationView {
-                VStack {
-                    WebImage(url: card.imageURL) { image in
-                        image.resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .scaledToFit()
-                            .frame(height: 300, alignment: .leading)
-                    } placeholder: {
-                        ProgressView().foregroundColor(Color.blue)
+                ZStack {
+                    Color.offWhite
+                    RoundedRectangle(cornerRadius: 25)
+                        .fill(Color.offWhite)
+                        .shadow(color: Color.black.opacity(0.22), radius: 10, x: 10, y: 10)
+                        .shadow(color: Color.white.opacity(0.70), radius: 10, x: -5, y: -5)
+                        .frame(minWidth: 300, maxHeight: .infinity)
+                    VStack {
+                        WebImage(url: card.imageURL) { image in
+                            image.resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .scaledToFit()
+                                .frame(height: 300, alignment: .leading)
+                        } placeholder: {
+                            ProgressView().foregroundColor(Color.blue)
+                        }
+                        .indicator(.activity)
+                        .transition(.fade(duration: 0.5))
+
+                        Spacer()
+
+                        CardDataDetailsView(card: card)
                     }
-                    .indicator(.activity)
-                    .transition(.fade(duration: 0.5))
-
-                    Spacer()
-
-                    CardDataDetailsView(card: card)
                 }
                 .padding()
                 .navigationBarItems(trailing: Button {
@@ -59,6 +71,7 @@ private extension CardDetailsView {
                         .foregroundColor(Color.gray)
                 })
             }
+            .background(Color.clear)
         }
 
     }
