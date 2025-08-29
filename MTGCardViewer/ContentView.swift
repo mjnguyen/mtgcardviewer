@@ -26,7 +26,7 @@ struct ContentView: View {
 
             layout {
                 searchView
-                    .frame(maxWidth: .infinity, maxHeight: 800, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical)
                     .background(.thinMaterial)
                     .border(Color.black, width: 1.0)
@@ -50,6 +50,8 @@ struct ContentView: View {
         }
     }
 
+    @State private var currentIndex: Int = 0
+
     private var resultView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 20) {
@@ -60,7 +62,9 @@ struct ContentView: View {
                                 .frame(minWidth: 150, maxHeight: .infinity, alignment: .center)
                                 .aspectRatio(contentMode: .fit)
                                 .onTapGesture {
+                                    let index = self.cards.firstIndex(where: { $0.id == card.id})
                                     cardService.setCurrentCard(card.wrappedValue)
+                                    self.currentIndex = index ?? 0
                                     isShowingModal.toggle()
                                 }
                         } placeholder: {
@@ -98,61 +102,60 @@ struct ContentView: View {
         .background(.ultraThickMaterial)
         .sheet(isPresented: $isShowingModal, content: {
             if let currentCard = cardService.currentCard {
-                CardDetailsView(card: currentCard, isPresented: $isShowingModal)
+                CardDetailsView(card: currentCard, isPresented: $isShowingModal, cards: cards)
             }
         })
     }
 
     private var searchView: some View {
-        List {
+        VStack(alignment: .leading) {
             TextField("Card name", text: $cardService.currentFilter.searchText)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .bold()
-                .listRowSeparator(.hidden)
 
             TextField("Artist", text: $cardService.currentFilter.artistName)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .bold()
-                .listRowSeparator(.hidden)
 
             TextField("Set", text: $cardService.currentFilter.setName)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .bold()
+
+            HStack(alignment: .top, spacing: 16) {
+                Picker("Rarity", selection: $cardService.currentFilter.rarity) {
+                    ForEach(Rarity.allCases, id: \.self) { value in
+                        Text(value.rawValue)
+                            .foregroundColor(.black)
+                            .foregroundStyle(.ultraThickMaterial)
+                            .tag(value)
+                            .bold()
+                    }
+                }
+                .border(Color.black, width: 1.0)
                 .listRowSeparator(.hidden)
+                .pickerStyle(.automatic)
+                .font(.subheadline)
+                .bold()
+                .padding(0)
 
-            Picker("Rarity", selection: $cardService.currentFilter.rarity) {
-                ForEach(Rarity.allCases, id: \.self) { value in
-                    Text(value.rawValue)
-                        .foregroundColor(.black)
-                        .foregroundStyle(.ultraThickMaterial)
-                        .tag(value)
-                        .bold()
-                }
-            }
-            .border(Color.black, width: 1.0)
-            .listRowSeparator(.hidden)
-            .pickerStyle(.automatic)
-            .font(.subheadline)
-            .bold()
-            .opacity(0.2)
-            .padding(0)
 
-            Picker("Card Type", selection: $cardService.currentFilter.cardType) {
-                ForEach(CardType.allCases, id: \.self) { value in
-                    Text(value.rawValue)
-                        .foregroundColor(.black)
-                        .foregroundStyle(.ultraThickMaterial)
-                        .tag(value)
-                        .bold()
+                Picker("Card Type", selection: $cardService.currentFilter.cardType) {
+                    ForEach(CardType.allCases, id: \.self) { value in
+                        Text(value.rawValue)
+                            .foregroundColor(.black)
+                            .foregroundStyle(.ultraThickMaterial)
+                            .tag(value)
+                            .bold()
+                    }
                 }
+                .border(Color.black, width: 1.0)
+                .listRowSeparator(.hidden)
+                .pickerStyle(.automatic)
+                .font(.subheadline)
+                .bold()
+                .padding(0)
             }
-            .border(Color.black, width: 1.0)
-            .listRowSeparator(.hidden)
-            .pickerStyle(.automatic)
-            .font(.subheadline)
-            .bold()
-            .opacity(0.2)
-            .padding(0)
+            .frame(maxWidth: .infinity, alignment: .center)
 
             fetchButton
                 .frame(maxWidth: .infinity, maxHeight: 60, alignment: .center)

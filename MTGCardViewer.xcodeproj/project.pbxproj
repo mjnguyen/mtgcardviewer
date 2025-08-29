@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1223087D2DFC7BFE00985ED7 /* CardDataDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1223087C2DFC7BFE00985ED7 /* CardDataDetailsView.swift */; };
 		124B4DA32B96C4C400E26D52 /* MTGCardViewerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124B4DA22B96C4C400E26D52 /* MTGCardViewerApp.swift */; };
 		124B4DA52B96C4C400E26D52 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124B4DA42B96C4C400E26D52 /* ContentView.swift */; };
 		124B4DA72B96C4C600E26D52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 124B4DA62B96C4C600E26D52 /* Assets.xcassets */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1223087C2DFC7BFE00985ED7 /* CardDataDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDataDetailsView.swift; sourceTree = "<group>"; };
 		124B4D9F2B96C4C400E26D52 /* MTGCardViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MTGCardViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		124B4DA22B96C4C400E26D52 /* MTGCardViewerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTGCardViewerApp.swift; sourceTree = "<group>"; };
 		124B4DA42B96C4C400E26D52 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 		124B4DA12B96C4C400E26D52 /* MTGCardViewer */ = {
 			isa = PBXGroup;
 			children = (
+				1223087C2DFC7BFE00985ED7 /* CardDataDetailsView.swift */,
 				1253C17B2BA4184800912D2D /* Info.plist */,
 				124B4DA22B96C4C400E26D52 /* MTGCardViewerApp.swift */,
 				124B4DA42B96C4C400E26D52 /* ContentView.swift */,
@@ -276,6 +279,7 @@
 				124B4DA52B96C4C400E26D52 /* ContentView.swift in Sources */,
 				12610B692BA4A75500A71048 /* CardDetailsView.swift in Sources */,
 				124B4DA32B96C4C400E26D52 /* MTGCardViewerApp.swift in Sources */,
+				1223087D2DFC7BFE00985ED7 /* CardDataDetailsView.swift in Sources */,
 				12610B6E2BA5A15B00A71048 /* Data.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

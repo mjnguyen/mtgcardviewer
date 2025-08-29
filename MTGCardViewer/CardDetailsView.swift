@@ -5,15 +5,27 @@ import SDWebImage
 struct CardDetailsView: View {
     let card: Card
     @Binding var isPresented: Bool
-
     @State var orientationChanged: Bool = true
+    @State var currentIndex: Int
+    let cards: [Card]
+
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @Environment(\.verticalSizeClass) var verticalSizeClass
+
+    init(card: Card, isPresented: Binding<Bool>, cards: [Card]) {
+        self.card = card
+        self._isPresented = isPresented
+        self.cards = cards
+        let initialIndex = cards.firstIndex(where: { $0.id == card.id }) ?? 0
+        self._currentIndex = State(initialValue: initialIndex)
+    }
 
     var body: some View {
         VStack {
-            if UIDevice.current.orientation.isPortrait {
-                PortraitView(card: card, isPresented: $isPresented)
+            if isPortrait {
+                PortraitView(card: cards[currentIndex], isPresented: $isPresented, currentIndex: $currentIndex, cards: cards)
             } else {
-                LandscapeView(card: card, isPresented: $isPresented)
+                LandscapeView(card: cards[currentIndex], isPresented: $isPresented)
             }
         }
         .padding()
@@ -22,8 +34,14 @@ struct CardDetailsView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             orientationChanged.toggle()
         }
-        .id(orientationChanged) // Force view update by changing its identifier
+        .id(orientationChanged)
+    }
 
+    private var isPortrait: Bool {
+        if horizontalSizeClass == .compact && verticalSizeClass == .regular {
+            return true
+        }
+        return UIDevice.current.orientation.isPortrait
     }
 }
 
@@ -35,45 +53,78 @@ private extension CardDetailsView {
     struct PortraitView: View {
         let card: Card
         @Binding var isPresented: Bool
+        @Binding var currentIndex: Int
+        let cards: [Card]
 
         var body: some View {
-            NavigationView {
-                ZStack {
-                    Color.offWhite
-                    RoundedRectangle(cornerRadius: 25)
-                        .fill(Color.offWhite)
-                        .shadow(color: Color.black.opacity(0.22), radius: 10, x: 10, y: 10)
-                        .shadow(color: Color.white.opacity(0.70), radius: 10, x: -5, y: -5)
-                        .frame(minWidth: 300, maxHeight: .infinity)
-                    VStack {
-                        WebImage(url: card.imageURL) { image in
-                            image.resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .scaledToFit()
-                                .frame(height: 300, alignment: .leading)
-                        } placeholder: {
-                            ProgressView().foregroundColor(Color.blue)
+            VStack(spacing: 0) {
+                // Card Image taking 25% of vertical space
+                WebImage(url: card.imageURL) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: UIScreen.main.bounds.height * 0.20, alignment: .top)
+                        .clipped()
+                } placeholder: {
+                    ProgressView().foregroundColor(Color.blue)
+                }
+                .indicator(.activity)
+                .transition(.fade(duration: 0.5))
+                .overlay(alignment: .center) {
+                    HStack {
+                        if currentIndex > 0 {
+                            Button {
+                                withAnimation {
+                                    currentIndex -= 1
+                                }
+                            } label: {
+                                Image(systemName: "chevron.left.circle.fill")
+                                    .font(.title)
+                                    .foregroundColor(.white.opacity(0.7))
+                                    .background(Color.black.opacity(0.3))
+                                    .clipShape(Circle())
+                            }
+                            .padding(.leading)
                         }
-                        .indicator(.activity)
-                        .transition(.fade(duration: 0.5))
-
+                        
                         Spacer()
-
-                        CardDataDetailsView(card: card)
+                        
+                        if currentIndex < cards.count - 1 {
+                            Button {
+                                withAnimation {
+                                    currentIndex += 1
+                                }
+                            } label: {
+                                Image(systemName: "chevron.right.circle.fill")
+                                    .font(.title)
+                                    .foregroundColor(.white.opacity(0.7))
+                                    .background(Color.black.opacity(0.3))
+                                    .clipShape(Circle())
+                            }
+                            .padding(.trailing)
+                        }
                     }
                 }
-                .padding()
-                .navigationBarItems(trailing: Button {
+
+                // Card Details taking remaining space
+                CardDataDetailsView(card: card)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .background(.thinMaterial)
+            .overlay(alignment: .topTrailing) {
+                Button {
                     isPresented.toggle()
                 } label: {
-                    Image(systemName: "xmark.circle")
-                        .font(.largeTitle)
-                        .foregroundColor(Color.gray)
-                })
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title)
+                        .foregroundColor(.gray)
+                        .background(.thinMaterial)
+                        .clipShape(Circle())
+                }
+                .padding()
             }
-            .background(Color.clear)
         }
-
     }
 
     struct LandscapeView: View {
@@ -97,14 +148,19 @@ private extension CardDetailsView {
 
                     CardDataDetailsView(card: card)
                 }
-                .padding()
-                .navigationBarItems(trailing: Button {
-                    isPresented.toggle()
-                } label: {
-                    Image(systemName: "xmark.circle")
-                        .font(.largeTitle)
-                        .foregroundColor(Color.gray)
-                })
+                .background(.thinMaterial)
+                .overlay(alignment: .topTrailing) {
+                    Button {
+                        isPresented.toggle()
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title)
+                            .foregroundColor(.gray)
+                            .background(.thinMaterial)
+                            .clipShape(Circle())
+                    }
+                    .padding()
+                }
             }
         }
     }
@@ -113,10 +169,8 @@ private extension CardDetailsView {
 struct CardDetailsView_Previews: PreviewProvider {
     @State static var isPresented: Bool = true
     static var previews: some View {
-
-        CardDetailsView(card: Card(name: "Example Card", rarity: Rarity.common, artist: "John Doe", set: "SOM", set_name: "Sample Set", card_faces: nil, power: "0", toughness: "1", cmc: 1, mana_cost: "{1}", type_line: "Enchantment", oracle_text: "-", flavor_text: "---", imageURL: URL(string: "https://example.com/image.jpg")!), isPresented: $isPresented)
-            .previewLayout(.sizeThatFits)
+        let exampleCard = Card(name: "Example Card", rarity: Rarity.common, artist: "John Doe", set: "SOM", set_name: "Sample Set", card_faces: nil, power: "0", toughness: "1", cmc: 1, mana_cost: "{1}", type_line: "Enchantment", oracle_text: "-", flavor_text: "---", imageURL: URL(string: "https://www.cardkingdom.com/mtg/tarkir-dragonstorm/mardu-devotee")!)
+        CardDetailsView(card: exampleCard, isPresented: $isPresented, cards: [exampleCard])
+//            .previewLayout(.sizeThatFits)
     }
 }
-
-
