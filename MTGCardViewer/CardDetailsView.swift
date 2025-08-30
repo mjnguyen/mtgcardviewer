@@ -75,9 +75,7 @@ private extension CardDetailsView {
                     HStack {
                         if currentIndex > 0 {
                             Button {
-                                withAnimation {
-                                    currentIndex -= 1
-                                }
+                                currentIndex -= 1
                             } label: {
                                 Image(systemName: "chevron.left.circle.fill")
                                     .font(.title)
@@ -90,11 +88,9 @@ private extension CardDetailsView {
                         
                         Spacer()
                         
-                        if currentIndex < cards.count - 1 {
+                        if currentIndex < (cards.count - 1) {
                             Button {
-                                withAnimation {
-                                    currentIndex += 1
-                                }
+                                currentIndex += 1
                             } label: {
                                 Image(systemName: "chevron.right.circle.fill")
                                     .font(.title)

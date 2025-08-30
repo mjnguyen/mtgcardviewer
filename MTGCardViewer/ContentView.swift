@@ -26,8 +26,7 @@ struct ContentView: View {
 
             layout {
                 searchView
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.vertical)
+                    .padding()
                     .background(.thinMaterial)
                     .border(Color.black, width: 1.0)
                 if (!isFullScreenLayout) {
@@ -40,6 +39,7 @@ struct ContentView: View {
             if isFullScreenLayout {
                 resultView
                     .frame(maxWidth: .infinity, alignment: .center)
+                    .padding()
 
             }
 
@@ -53,7 +53,7 @@ struct ContentView: View {
     @State private var currentIndex: Int = 0
 
     private var resultView: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
+        ScrollView(.horizontal, showsIndicators: true) {
             HStack(spacing: 20) {
                 ForEach($cards) { card in
                     VStack {
@@ -62,10 +62,11 @@ struct ContentView: View {
                                 .frame(minWidth: 150, maxHeight: .infinity, alignment: .center)
                                 .aspectRatio(contentMode: .fit)
                                 .onTapGesture {
-                                    let index = self.cards.firstIndex(where: { $0.id == card.id})
-                                    cardService.setCurrentCard(card.wrappedValue)
-                                    self.currentIndex = index ?? 0
-                                    isShowingModal.toggle()
+                                    if let index = self.cards.firstIndex(where: { $0.id == card.id}) {
+                                        cardService.setCurrentCard(card.wrappedValue)
+                                        self.currentIndex = index
+                                        isShowingModal.toggle()
+                                    }
                                 }
                         } placeholder: {
                             ProgressView().foregroundColor(Color.blue)
@@ -174,7 +175,7 @@ struct ContentView: View {
             }
         }
         .listStyle(.plain)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .navigationTitle("MTG Card Viewer")
 
     }
