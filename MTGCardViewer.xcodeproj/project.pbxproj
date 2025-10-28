@@ -39,7 +39,7 @@
 
 /* Begin PBXFileReference section */
 		1223087C2DFC7BFE00985ED7 /* CardDataDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDataDetailsView.swift; sourceTree = "<group>"; };
-		124B4D9F2B96C4C400E26D52 /* MTGCardViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MTGCardViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		124B4D9F2B96C4C400E26D52 /* My MTG Card Viewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "My MTG Card Viewer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		124B4DA22B96C4C400E26D52 /* MTGCardViewerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTGCardViewerApp.swift; sourceTree = "<group>"; };
 		124B4DA42B96C4C400E26D52 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		124B4DA62B96C4C600E26D52 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -93,7 +93,7 @@
 		124B4DA02B96C4C400E26D52 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				124B4D9F2B96C4C400E26D52 /* MTGCardViewer.app */,
+				124B4D9F2B96C4C400E26D52 /* My MTG Card Viewer.app */,
 				124B4DAF2B96C4C700E26D52 /* MTGCardViewerTests.xctest */,
 				124B4DB92B96C4C700E26D52 /* MTGCardViewerUITests.xctest */,
 			);
@@ -143,9 +143,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		124B4D9E2B96C4C400E26D52 /* MTGCardViewer */ = {
+		124B4D9E2B96C4C400E26D52 /* My MTG Card Viewer */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 124B4DC32B96C4C700E26D52 /* Build configuration list for PBXNativeTarget "MTGCardViewer" */;
+			buildConfigurationList = 124B4DC32B96C4C700E26D52 /* Build configuration list for PBXNativeTarget "My MTG Card Viewer" */;
 			buildPhases = (
 				124B4D9B2B96C4C400E26D52 /* Sources */,
 				124B4D9C2B96C4C400E26D52 /* Frameworks */,
@@ -155,12 +155,12 @@
 			);
 			dependencies = (
 			);
-			name = MTGCardViewer;
+			name = "My MTG Card Viewer";
 			packageProductDependencies = (
 				12610B6B2BA58A3900A71048 /* SDWebImageSwiftUI */,
 			);
 			productName = MTGCardViewer;
-			productReference = 124B4D9F2B96C4C400E26D52 /* MTGCardViewer.app */;
+			productReference = 124B4D9F2B96C4C400E26D52 /* My MTG Card Viewer.app */;
 			productType = "com.apple.product-type.application";
 		};
 		124B4DAE2B96C4C700E26D52 /* MTGCardViewerTests */ = {
@@ -238,7 +238,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				124B4D9E2B96C4C400E26D52 /* MTGCardViewer */,
+				124B4D9E2B96C4C400E26D52 /* My MTG Card Viewer */,
 				124B4DAE2B96C4C700E26D52 /* MTGCardViewerTests */,
 				124B4DB82B96C4C700E26D52 /* MTGCardViewerUITests */,
 			);
@@ -306,12 +306,12 @@
 /* Begin PBXTargetDependency section */
 		124B4DB12B96C4C700E26D52 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 124B4D9E2B96C4C400E26D52 /* MTGCardViewer */;
+			target = 124B4D9E2B96C4C400E26D52 /* My MTG Card Viewer */;
 			targetProxy = 124B4DB02B96C4C700E26D52 /* PBXContainerItemProxy */;
 		};
 		124B4DBB2B96C4C700E26D52 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 124B4D9E2B96C4C400E26D52 /* MTGCardViewer */;
+			target = 124B4D9E2B96C4C400E26D52 /* My MTG Card Viewer */;
 			targetProxy = 124B4DBA2B96C4C700E26D52 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -448,6 +448,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MTGCardViewer/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "My CCG Card Viewer";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -458,8 +460,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = net.forevernow.MTGCardViewer;
+				MARKETING_VERSION = 0.01;
+				PRODUCT_BUNDLE_IDENTIFIER = net.forevernow.CardViewerMTG;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -479,6 +481,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MTGCardViewer/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "My CCG Card Viewer";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -489,8 +493,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = net.forevernow.MTGCardViewer;
+				MARKETING_VERSION = 0.01;
+				PRODUCT_BUNDLE_IDENTIFIER = net.forevernow.CardViewerMTG;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -586,7 +590,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		124B4DC32B96C4C700E26D52 /* Build configuration list for PBXNativeTarget "MTGCardViewer" */ = {
+		124B4DC32B96C4C700E26D52 /* Build configuration list for PBXNativeTarget "My MTG Card Viewer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				124B4DC42B96C4C700E26D52 /* Debug */,
@@ -618,7 +622,7 @@
 /* Begin XCRemoteSwiftPackageReference section */
 		12610B6A2BA5874D00A71048 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
+			repositoryURL = "https://github.com/mjnguyen/SDWebImageSwiftUI.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 3.0.0;

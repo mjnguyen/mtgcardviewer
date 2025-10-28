@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "124B4D9E2B96C4C400E26D52"
-               BuildableName = "MTGCardViewer.app"
-               BlueprintName = "MTGCardViewer"
+               BuildableName = "My MTG Card Viewer.app"
+               BlueprintName = "My MTG Card Viewer"
                ReferencedContainer = "container:MTGCardViewer.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -69,8 +69,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "124B4D9E2B96C4C400E26D52"
-            BuildableName = "MTGCardViewer.app"
-            BlueprintName = "MTGCardViewer"
+            BuildableName = "My MTG Card Viewer.app"
+            BlueprintName = "My MTG Card Viewer"
             ReferencedContainer = "container:MTGCardViewer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -86,8 +86,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "124B4D9E2B96C4C400E26D52"
-            BuildableName = "MTGCardViewer.app"
-            BlueprintName = "MTGCardViewer"
+            BuildableName = "My MTG Card Viewer.app"
+            BlueprintName = "My MTG Card Viewer"
             ReferencedContainer = "container:MTGCardViewer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
