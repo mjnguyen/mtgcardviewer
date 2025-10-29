@@ -16,6 +16,7 @@
 		124B4DBE2B96C4C700E26D52 /* MTGCardViewerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124B4DBD2B96C4C700E26D52 /* MTGCardViewerUITests.swift */; };
 		124B4DC02B96C4C700E26D52 /* MTGCardViewerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124B4DBF2B96C4C700E26D52 /* MTGCardViewerUITestsLaunchTests.swift */; };
 		125B87A72EB1D2DE00B0AD66 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125B87A62EB1D2DA00B0AD66 /* Extensions.swift */; };
+		125B87A92EB1E72000B0AD66 /* Dimir.appIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 125B87A82EB1E72000B0AD66 /* Dimir.appIcon.icon */; };
 		12610B692BA4A75500A71048 /* CardDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12610B682BA4A75500A71048 /* CardDetailsView.swift */; };
 		12610B6C2BA58A3900A71048 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 12610B6B2BA58A3900A71048 /* SDWebImageSwiftUI */; };
 		12610B6E2BA5A15B00A71048 /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12610B6D2BA5A15B00A71048 /* Data.swift */; };
@@ -52,6 +53,7 @@
 		124B4DBF2B96C4C700E26D52 /* MTGCardViewerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTGCardViewerUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		1253C17B2BA4184800912D2D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		125B87A62EB1D2DA00B0AD66 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		125B87A82EB1E72000B0AD66 /* Dimir.appIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Dimir.appIcon.icon; sourceTree = "<group>"; };
 		12610B682BA4A75500A71048 /* CardDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailsView.swift; sourceTree = "<group>"; };
 		12610B6D2BA5A15B00A71048 /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -111,6 +113,7 @@
 				125B87A62EB1D2DA00B0AD66 /* Extensions.swift */,
 				124B4DA42B96C4C400E26D52 /* ContentView.swift */,
 				124B4DA62B96C4C600E26D52 /* Assets.xcassets */,
+				125B87A82EB1E72000B0AD66 /* Dimir.appIcon.icon */,
 				124B4DA82B96C4C600E26D52 /* Preview Content */,
 				12610B682BA4A75500A71048 /* CardDetailsView.swift */,
 				12610B6D2BA5A15B00A71048 /* Data.swift */,
@@ -255,6 +258,7 @@
 			files = (
 				124B4DAA2B96C4C600E26D52 /* Preview Assets.xcassets in Resources */,
 				124B4DA72B96C4C600E26D52 /* Assets.xcassets in Resources */,
+				125B87A92EB1E72000B0AD66 /* Dimir.appIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -443,8 +447,9 @@
 		124B4DC42B96C4C700E26D52 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Dimir.appIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MTGCardViewer/Preview Content\"";
@@ -476,8 +481,9 @@
 		124B4DC52B96C4C700E26D52 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Dimir.appIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MTGCardViewer/Preview Content\"";
