@@ -173,8 +173,10 @@ struct ContentView: View {
                     .padding(0)
                     .frame(maxWidth: .infinity, maxHeight:50, alignment: .center)
             }
+
+            Spacer()
+            Text("Version \(Bundle.main.releaseVersionNumber ?? "Unknown") (\(Bundle.main.buildVersionNumber ?? "Unknown"))")
         }
-        .listStyle(.plain)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .navigationTitle("MTG Card Viewer")
 
