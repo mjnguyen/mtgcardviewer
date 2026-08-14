@@ -8,18 +8,17 @@ struct ContentView: View {
     @State private var serviceError: CardSearchError?
     @State private var cards: [Card] = [Card]()
 
-    @State private var orientationChanged = false
     @State private var isShowingModal = false
     @State private var imageWidth = 300.0
 
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
 
-    @ObservedObject
+    @StateObject
     private var cardService: CardService = CardService()
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             let isFullScreenLayout = (sizeClass == verticalSizeClass && sizeClass == .regular)
             let isLandscape = (verticalSizeClass != .regular || isFullScreenLayout || UIDevice.current.orientation.isLandscape)
             let layout = isLandscape ? AnyLayout(HStackLayout(alignment: .top, spacing: 0)) : AnyLayout(VStackLayout(alignment: .leading, spacing: 0))
@@ -45,9 +44,6 @@ struct ContentView: View {
 
         }
         .background(.thinMaterial)
-        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-            orientationChanged.toggle()
-        }
     }
 
     @State private var currentIndex: Int = 0
@@ -65,7 +61,7 @@ struct ContentView: View {
                                     if let index = self.cards.firstIndex(where: { $0.id == card.id}) {
                                         cardService.setCurrentCard(card.wrappedValue)
                                         self.currentIndex = index
-                                        isShowingModal.toggle()
+                                        isShowingModal = true
                                     }
                                 }
                         } placeholder: {
@@ -201,14 +197,6 @@ struct ContentView: View {
         .padding(10)
     }
 
-    private var errorMessageView: some View {
-        Text("\(serviceError?.failureReason ?? "")")
-            .font(.subheadline)
-            .foregroundStyle(.red)
-            .bold()
-            .italic()
-            .padding()
-    }
 }
 
 struct ContentView_Previews: PreviewProvider {

@@ -5,8 +5,6 @@
 //  Created by Michael Nguyen on 6/13/25.
 //
 
-import SDWebImageSwiftUI
-import SDWebImage
 import SwiftUI
 
 struct CardDataDetailsView: View {

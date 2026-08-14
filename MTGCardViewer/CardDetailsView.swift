@@ -5,7 +5,6 @@ import SDWebImage
 struct CardDetailsView: View {
     let card: Card
     @Binding var isPresented: Bool
-    @State var orientationChanged: Bool = true
     @State var currentIndex: Int
     let cards: [Card]
 
@@ -30,11 +29,7 @@ struct CardDetailsView: View {
         }
         .padding()
         .background(.regularMaterial)
-        .cornerRadius(20)
-        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-            orientationChanged.toggle()
-        }
-        .id(orientationChanged)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 
     private var isPortrait: Bool {
@@ -57,14 +52,15 @@ private extension CardDetailsView {
         let cards: [Card]
 
         var body: some View {
+            GeometryReader { geo in
             VStack(spacing: 0) {
-                // Card Image taking 25% of vertical space
+                // Card Image taking 20% of vertical space
                 WebImage(url: card.imageURL) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(maxWidth: .infinity)
-                        .frame(height: UIScreen.main.bounds.height * 0.20, alignment: .top)
+                        .frame(height: geo.size.height * 0.20, alignment: .top)
                         .clipped()
                 } placeholder: {
                     ProgressView().foregroundColor(Color.blue)
@@ -121,6 +117,7 @@ private extension CardDetailsView {
                 .padding()
             }
         }
+        } // GeometryReader
     }
 
     struct LandscapeView: View {
@@ -129,7 +126,7 @@ private extension CardDetailsView {
         @Binding var isPresented: Bool
 
         var body: some View {
-            NavigationView {
+            NavigationStack {
                 HStack {
                     WebImage(url: card.imageURL) { image in
                         image.resizable()

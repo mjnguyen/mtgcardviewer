@@ -109,48 +109,45 @@ class CardService: ObservableObject {
 
         print("URL: \(url)")
         error = nil
-        URLSession.shared.dataTask(with: url) { data, response, error in
+        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            guard let self else { return }
             guard let data else {
                 let serviceError = CardSearchError(errorDescription: error?.localizedDescription, searchErrorType: .data)
-                onError(serviceError)
+                DispatchQueue.main.async { onError(serviceError) }
                 return
             }
             guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode >= 200 && httpResponse.statusCode < 300 else {
                 if let errorResponse = try? JSONDecoder().decode(CardFetchErrorResponse.self, from: data) {
                     let details = errorResponse.details
                     let serviceError = CardSearchError(errorDescription: details, searchErrorType: .noResults)
-                    onError(serviceError)
+                    DispatchQueue.main.async { onError(serviceError) }
                 }
                 else {
                     let serviceError = CardSearchError(errorDescription: error?.localizedDescription, searchErrorType: .data)
-                    onError(serviceError)
+                    DispatchQueue.main.async { onError(serviceError) }
                 }
                 return
             }
 
             do {
                 let decodedResponse = try JSONDecoder().decode(CardFetchResponse.self, from: data)
-                if true {
-                    DispatchQueue.main.async {
-                        let cards = decodedResponse.data.compactMap { cardData in
-                            var imageURL: URL?
-                            if let imageURLString = cardData.image_uris?["normal"] {
-                                imageURL = URL(string: imageURLString)
-                            }
-                            else if let card_faces = cardData.card_faces, let imageURLString = card_faces.first?.image_uris?["normal"] {
-                                imageURL = URL(string: imageURLString)
-
-                            }
-                            return Card(name: cardData.name, rarity: cardData.rarity, artist: cardData.artist ?? "Unknown", set: cardData.set, set_name: cardData.set_name, card_faces: cardData.card_faces, power: cardData.power, toughness: cardData.toughness, cmc: cardData.cmc, mana_cost: cardData.mana_cost, type_line: cardData.type_line, oracle_text: cardData.oracle_text ?? "", flavor_text: cardData.flavor_text, imageURL: imageURL)
+                DispatchQueue.main.async {
+                    let cards = decodedResponse.data.compactMap { cardData in
+                        var imageURL: URL?
+                        if let imageURLString = cardData.image_uris?["normal"] {
+                            imageURL = URL(string: imageURLString)
                         }
-                        self.updateCards(cards, decodedResponse.total_cards)
-                        completion(cards)
-                        return
+                        else if let card_faces = cardData.card_faces, let imageURLString = card_faces.first?.image_uris?["normal"] {
+                            imageURL = URL(string: imageURLString)
+                        }
+                        return Card(name: cardData.name, rarity: cardData.rarity, artist: cardData.artist ?? "Unknown", set: cardData.set, set_name: cardData.set_name, card_faces: cardData.card_faces, power: cardData.power, toughness: cardData.toughness, cmc: cardData.cmc, mana_cost: cardData.mana_cost, type_line: cardData.type_line, oracle_text: cardData.oracle_text ?? "", flavor_text: cardData.flavor_text, imageURL: imageURL)
                     }
+                    self.updateCards(cards, decodedResponse.total_cards)
+                    completion(cards)
                 }
             } catch {
                 let serviceError = CardSearchError(errorDescription: error.localizedDescription, searchErrorType: .unknown)
-                onError(serviceError)
+                DispatchQueue.main.async { onError(serviceError) }
             }
         }.resume()
     }
@@ -198,7 +195,7 @@ struct CardSearchError: Error, LocalizedError {
         case .noResults:
             return "No Results"
         case .network:
-            return "Netowrk Error"
+            return "Network Error"
         default:
             return "Unknown Error"
         }
