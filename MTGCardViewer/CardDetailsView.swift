@@ -192,7 +192,7 @@ private extension CardDetailsView {
 struct CardDetailsView_Previews: PreviewProvider {
     @State static var isPresented: Bool = true
     static var previews: some View {
-        let exampleCard = Card(name: "Example Card", rarity: Rarity.common, artist: "John Doe", set: "SOM", set_name: "Sample Set", card_faces: nil, power: "0", toughness: "1", cmc: 1, mana_cost: "{1}", type_line: "Enchantment", oracle_text: "-", flavor_text: "---", imageURL: URL(string: "https://www.cardkingdom.com/mtg/tarkir-dragonstorm/mardu-devotee")!)
+        let exampleCard = Card(name: "Example Card", rarity: Rarity.common, artist: "John Doe", set: "SOM", setName: "Sample Set", cardFaces: nil, power: "0", toughness: "1", cmc: 1, manaCost: "{1}", typeLine: "Enchantment", oracleText: "-", flavorText: "---", imageURL: URL(string: "https://www.cardkingdom.com/mtg/tarkir-dragonstorm/mardu-devotee")!)
         CardDetailsView(card: exampleCard, isPresented: $isPresented, cards: [exampleCard])
 //            .previewLayout(.sizeThatFits)
     }

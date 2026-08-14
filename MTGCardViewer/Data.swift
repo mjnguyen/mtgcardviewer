@@ -16,7 +16,6 @@ enum Rarity: String, CaseIterable, Equatable, Decodable {
     case mythic = "mythic"
     case special = "special"
     case bonus = "bonus"
-
 }
 
 enum CardType: String, CaseIterable, Equatable, Decodable {
@@ -32,7 +31,6 @@ enum CardType: String, CaseIterable, Equatable, Decodable {
     // Supertypes
     case legendary = "legend"
     case snow = "snow"
-
 }
 
 struct Card: Identifiable {
@@ -41,15 +39,15 @@ struct Card: Identifiable {
     var rarity: Rarity
     var artist: String
     let set: String
-    var set_name: String
-    let card_faces: [CardFaces]?
+    var setName: String
+    let cardFaces: [CardFaces]?
     let power: String?
     let toughness: String?
     let cmc: Double
-    let mana_cost: String?
-    let type_line: String
-    let oracle_text: String?
-    let flavor_text: String?
+    let manaCost: String?
+    let typeLine: String
+    let oracleText: String?
+    let flavorText: String?
     var imageURL: URL?
 }
 
@@ -64,12 +62,14 @@ struct CardFilter {
 
 class CardService: ObservableObject {
     @Published var cards: [Card] = []
-    @Published var total_cards: Int = 0
+    @Published var totalCards: Int = 0
     @Published var currentFilter: CardFilter = CardFilter()
     @Published var currentCard: Card?
     @Published var error: CardFetchErrorResponse?
 
-    func fetchCards( completion: @escaping (([Card]) -> Void), onError: @escaping (CardSearchError) -> Void) {
+    private var activeTask: URLSessionDataTask?
+
+    func fetchCards(completion: @escaping (([Card]) -> Void), onError: @escaping (CardSearchError) -> Void) {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.scryfall.com"
@@ -80,23 +80,19 @@ class CardService: ObservableObject {
         if !currentFilter.searchText.isEmpty {
             searchTerms += currentFilter.searchText
         }
-
         if !currentFilter.artistName.isEmpty {
             searchTerms += " a:\"" + currentFilter.artistName + "\""
         }
         if !currentFilter.setName.isEmpty {
             searchTerms += " e:" + currentFilter.setName
         }
-
         if currentFilter.rarity != .all {
             searchTerms += " rarity:" + currentFilter.rarity.rawValue
         }
-
         if currentFilter.cardType != .all {
             searchTerms += " t:" + currentFilter.cardType.rawValue
         }
-
-        if searchTerms.count > 0 {
+        if !searchTerms.isEmpty {
             queryItems.append(URLQueryItem(name: "q", value: searchTerms))
         }
 
@@ -109,20 +105,20 @@ class CardService: ObservableObject {
 
         print("URL: \(url)")
         error = nil
-        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+        activeTask?.cancel()
+        activeTask = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             guard let self else { return }
             guard let data else {
                 let serviceError = CardSearchError(errorDescription: error?.localizedDescription, searchErrorType: .data)
                 DispatchQueue.main.async { onError(serviceError) }
                 return
             }
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode >= 200 && httpResponse.statusCode < 300 else {
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode >= 200 && httpResponse.statusCode < 300 else {
                 if let errorResponse = try? JSONDecoder().decode(CardFetchErrorResponse.self, from: data) {
-                    let details = errorResponse.details
-                    let serviceError = CardSearchError(errorDescription: details, searchErrorType: .noResults)
+                    let serviceError = CardSearchError(errorDescription: errorResponse.details, searchErrorType: .noResults)
                     DispatchQueue.main.async { onError(serviceError) }
-                }
-                else {
+                } else {
                     let serviceError = CardSearchError(errorDescription: error?.localizedDescription, searchErrorType: .data)
                     DispatchQueue.main.async { onError(serviceError) }
                 }
@@ -132,43 +128,59 @@ class CardService: ObservableObject {
             do {
                 let decodedResponse = try JSONDecoder().decode(CardFetchResponse.self, from: data)
                 DispatchQueue.main.async {
-                    let cards = decodedResponse.data.compactMap { cardData in
+                    let cards = decodedResponse.data.compactMap { cardData -> Card in
                         var imageURL: URL?
-                        if let imageURLString = cardData.image_uris?["normal"] {
-                            imageURL = URL(string: imageURLString)
+                        if let urlString = cardData.imageURIs?["normal"] {
+                            imageURL = URL(string: urlString)
+                        } else if let urlString = cardData.cardFaces?.first?.imageURIs?["normal"] {
+                            imageURL = URL(string: urlString)
                         }
-                        else if let card_faces = cardData.card_faces, let imageURLString = card_faces.first?.image_uris?["normal"] {
-                            imageURL = URL(string: imageURLString)
-                        }
-                        return Card(name: cardData.name, rarity: cardData.rarity, artist: cardData.artist ?? "Unknown", set: cardData.set, set_name: cardData.set_name, card_faces: cardData.card_faces, power: cardData.power, toughness: cardData.toughness, cmc: cardData.cmc, mana_cost: cardData.mana_cost, type_line: cardData.type_line, oracle_text: cardData.oracle_text ?? "", flavor_text: cardData.flavor_text, imageURL: imageURL)
+                        return Card(
+                            name: cardData.name,
+                            rarity: cardData.rarity,
+                            artist: cardData.artist ?? "Unknown",
+                            set: cardData.set,
+                            setName: cardData.setName,
+                            cardFaces: cardData.cardFaces,
+                            power: cardData.power,
+                            toughness: cardData.toughness,
+                            cmc: cardData.cmc,
+                            manaCost: cardData.manaCost,
+                            typeLine: cardData.typeLine,
+                            oracleText: cardData.oracleText ?? "",
+                            flavorText: cardData.flavorText,
+                            imageURL: imageURL
+                        )
                     }
-                    self.updateCards(cards, decodedResponse.total_cards)
+                    self.updateCards(cards, decodedResponse.totalCards)
                     completion(cards)
                 }
             } catch {
                 let serviceError = CardSearchError(errorDescription: error.localizedDescription, searchErrorType: .unknown)
                 DispatchQueue.main.async { onError(serviceError) }
             }
-        }.resume()
+        }
+        activeTask?.resume()
     }
 
     func updateCards(_ results: [Card], _ total: Int) {
         cards = results
-        total_cards = total
+        totalCards = total
     }
 
     func setCurrentCard(_ card: Card) {
         currentCard = card
     }
-
 }
 
 struct CardFetchResponse: Decodable {
-    let has_more: Bool
-    let total_cards: Int
-    let object: String
-    let next_page: String?
+    let totalCards: Int
     let data: [CardData]
+
+    enum CodingKeys: String, CodingKey {
+        case totalCards = "total_cards"
+        case data
+    }
 }
 
 struct CardFetchErrorResponse: Decodable {
@@ -187,37 +199,30 @@ struct CardSearchError: Error, LocalizedError {
         case unknown
     }
 
-    /// A localized message describing the reason for the failure.
     var failureReason: String? {
         switch searchErrorType {
-        case .emptySearchFields:
-            return "Please fill in search criteria"
-        case .noResults:
-            return "No Results"
-        case .network:
-            return "Network Error"
-        default:
-            return "Unknown Error"
+        case .emptySearchFields: return "Please fill in search criteria"
+        case .noResults:         return "No Results"
+        case .network:           return "Network Error"
+        default:                 return "Unknown Error"
         }
     }
 
-    /// A localized message describing what error occurred.
     var errorDescription: String?
-
-    /// A localized message describing how one might recover from the failure.
     var recoverySuggestion: String?
-
-    /// A localized message providing "help" text if the user requests help.
     var helpAnchor: String?
-
-
     var searchErrorType: CardSearchErrorType
 }
 
 struct CardFaces: Decodable {
-    let image_uris: [String: String]?
+    let imageURIs: [String: String]?
     let object: String
     let name: String
+
+    enum CodingKeys: String, CodingKey {
+        case imageURIs = "image_uris"
+        case object, name
+    }
 }
 
 struct CardData: Decodable {
@@ -225,28 +230,25 @@ struct CardData: Decodable {
     let rarity: Rarity
     let artist: String?
     let set: String
-    let set_name: String
-    let card_faces: [CardFaces]?
-    var power: String? = ""
-    var toughness: String? = ""
+    let setName: String
+    let cardFaces: [CardFaces]?
+    var power: String?
+    var toughness: String?
     let cmc: Double
-    let mana_cost: String?
-    let type_line: String
-    let oracle_text: String?
-    let flavor_text: String?
-    let image_uris: [String: String]?
-}
+    let manaCost: String?
+    let typeLine: String
+    let oracleText: String?
+    let flavorText: String?
+    let imageURIs: [String: String]?
 
-struct CardDetailRow: View {
-    let title: String
-    let value: String
-
-    var body: some View {
-        Text(title + ":")
-            .bold()
-
-        Spacer()
-        Text(value)
-            .padding(.leading, 5)
+    enum CodingKeys: String, CodingKey {
+        case name, rarity, artist, set, cmc, power, toughness
+        case setName    = "set_name"
+        case cardFaces  = "card_faces"
+        case manaCost   = "mana_cost"
+        case typeLine   = "type_line"
+        case oracleText = "oracle_text"
+        case flavorText = "flavor_text"
+        case imageURIs  = "image_uris"
     }
 }

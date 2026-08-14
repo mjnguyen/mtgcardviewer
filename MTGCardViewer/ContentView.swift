@@ -68,7 +68,7 @@ struct ContentView: View {
                             .font(.subheadline)
                         Text("Artist: \(card.artist)")
                             .font(.subheadline)
-                        Text(card.set_name)
+                        Text(card.setName)
                             .font(.subheadline).italic().bold()
                     }
                     .frame(width: 200)
@@ -146,8 +146,7 @@ struct ContentView: View {
                 }
 
             if cardService.cards.count > 0 {
-                let total_cards = cardService.total_cards
-                Text("\(cardService.cards.count) of \(total_cards) Cards Shown")
+                Text("\(cardService.cards.count) of \(cardService.totalCards) Cards Shown")
                     .font(.subheadline)
                     .padding(0)
                     .frame(maxWidth: .infinity, maxHeight:50, alignment: .center)
