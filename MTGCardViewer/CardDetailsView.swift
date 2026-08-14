@@ -24,7 +24,7 @@ struct CardDetailsView: View {
             if isPortrait {
                 PortraitView(card: cards[currentIndex], isPresented: $isPresented, currentIndex: $currentIndex, cards: cards)
             } else {
-                LandscapeView(card: cards[currentIndex], isPresented: $isPresented)
+                LandscapeView(card: cards[currentIndex], isPresented: $isPresented, currentIndex: $currentIndex, cards: cards)
             }
         }
         .padding()
@@ -122,8 +122,9 @@ private extension CardDetailsView {
 
     struct LandscapeView: View {
         let card: Card
-
         @Binding var isPresented: Bool
+        @Binding var currentIndex: Int
+        let cards: [Card]
 
         var body: some View {
             NavigationStack {
@@ -138,6 +139,35 @@ private extension CardDetailsView {
                     }
                     .indicator(.activity)
                     .transition(.fade(duration: 0.5))
+                    .overlay(alignment: .center) {
+                        HStack {
+                            if currentIndex > 0 {
+                                Button {
+                                    currentIndex -= 1
+                                } label: {
+                                    Image(systemName: "chevron.left.circle.fill")
+                                        .font(.title)
+                                        .foregroundColor(.white.opacity(0.7))
+                                        .background(Color.black.opacity(0.3))
+                                        .clipShape(Circle())
+                                }
+                                .padding(.leading)
+                            }
+                            Spacer()
+                            if currentIndex < (cards.count - 1) {
+                                Button {
+                                    currentIndex += 1
+                                } label: {
+                                    Image(systemName: "chevron.right.circle.fill")
+                                        .font(.title)
+                                        .foregroundColor(.white.opacity(0.7))
+                                        .background(Color.black.opacity(0.3))
+                                        .clipShape(Circle())
+                                }
+                                .padding(.trailing)
+                            }
+                        }
+                    }
 
                     CardDataDetailsView(card: card)
                 }

@@ -6,10 +6,7 @@ struct ContentView: View {
 
     @State private var hasServiceError = false
     @State private var serviceError: CardSearchError?
-    @State private var cards: [Card] = [Card]()
-
     @State private var isShowingModal = false
-    @State private var imageWidth = 300.0
 
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
@@ -46,49 +43,35 @@ struct ContentView: View {
         .background(.thinMaterial)
     }
 
-    @State private var currentIndex: Int = 0
-
     private var resultView: some View {
         ScrollView(.horizontal, showsIndicators: true) {
             HStack(spacing: 20) {
-                ForEach($cards) { card in
+                ForEach(cardService.cards) { card in
                     VStack {
-                        WebImage(url: card.imageURL.wrappedValue) { image in
+                        WebImage(url: card.imageURL) { image in
                             image.resizable()
-                                .frame(minWidth: 150, maxHeight: .infinity, alignment: .center)
-                                .aspectRatio(contentMode: .fit)
+                                .scaledToFit()
                                 .onTapGesture {
-                                    if let index = self.cards.firstIndex(where: { $0.id == card.id}) {
-                                        cardService.setCurrentCard(card.wrappedValue)
-                                        self.currentIndex = index
-                                        isShowingModal = true
-                                    }
+                                    cardService.setCurrentCard(card)
+                                    isShowingModal = true
                                 }
                         } placeholder: {
                             ProgressView().foregroundColor(Color.blue)
-                        }
-                        .onSuccess { image, data, cacheType in
-                            imageWidth = image.size.width
-
                         }
                         .indicator(.activity)
                         .transition(.fade(duration: 0.5))
                         .scaledToFit()
 
-                        Text(card.name.wrappedValue)
+                        Text(card.name)
                             .font(.headline)
-                            .frame(maxWidth: imageWidth)
-                        Text("\(String(describing: card.rarity.wrappedValue))")
+                        Text(card.rarity.rawValue.capitalized)
                             .font(.subheadline)
-                            .frame(maxWidth: imageWidth)
-                        Text("Artist: \(card.artist.wrappedValue)")
+                        Text("Artist: \(card.artist)")
                             .font(.subheadline)
-                            .frame(maxWidth: imageWidth)
-                        Text("\(card.set_name.wrappedValue)")
+                        Text(card.set_name)
                             .font(.subheadline).italic().bold()
-                            .frame(maxWidth: imageWidth)
-
                     }
+                    .frame(width: 200)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .center)
@@ -99,7 +82,7 @@ struct ContentView: View {
         .background(.ultraThickMaterial)
         .sheet(isPresented: $isShowingModal, content: {
             if let currentCard = cardService.currentCard {
-                CardDetailsView(card: currentCard, isPresented: $isShowingModal, cards: cards)
+                CardDetailsView(card: currentCard, isPresented: $isShowingModal, cards: cardService.cards)
             }
         })
     }
@@ -162,9 +145,9 @@ struct ContentView: View {
                         Text(error.recoverySuggestion ?? "")
                 }
 
-            if self.cards.count > 0 {
+            if cardService.cards.count > 0 {
                 let total_cards = cardService.total_cards
-                Text("\(cards.count) of \(total_cards) Cards Shown")
+                Text("\(cardService.cards.count) of \(total_cards) Cards Shown")
                     .font(.subheadline)
                     .padding(0)
                     .frame(maxWidth: .infinity, maxHeight:50, alignment: .center)
@@ -180,8 +163,7 @@ struct ContentView: View {
 
     private var fetchButton: some View {
         Button("Fetch Cards") {
-            cardService.fetchCards() { results in
-                self.cards = results
+            cardService.fetchCards() { _ in
                 self.hasServiceError = false
                 self.serviceError = nil
             } onError: { serviceError in

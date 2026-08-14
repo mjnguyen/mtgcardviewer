@@ -45,7 +45,7 @@ struct Card: Identifiable {
     let card_faces: [CardFaces]?
     let power: String?
     let toughness: String?
-    let cmc: Int
+    let cmc: Double
     let mana_cost: String?
     let type_line: String
     let oracle_text: String?
@@ -53,7 +53,7 @@ struct Card: Identifiable {
     var imageURL: URL?
 }
 
-class CardFilter: Identifiable {
+struct CardFilter {
     var searchText: String = ""
     var artistName: String = ""
     var rarity: Rarity = .all
@@ -229,7 +229,7 @@ struct CardData: Decodable {
     let card_faces: [CardFaces]?
     var power: String? = ""
     var toughness: String? = ""
-    let cmc: Int
+    let cmc: Double
     let mana_cost: String?
     let type_line: String
     let oracle_text: String?
